@@ -19,21 +19,33 @@ namespace Todo2Backend.Controllers
 
         // GET api/items
         [HttpGet]
-        public List<Item> Get()
+        // Return IActionResult instead of Lists/Items. IActionResult is an interface which represents any result that an action can return
+        // i.e. an html page, JSON, a file, etc...
+        // Using IActionResult lets us wrap the objects we return with HTTP Response messages that we define (Not Found, Bad Request, Success, etc...)
+        public IActionResult Get()
         {
             // return all items in our MockDb
             List<Item> itemList = _mockDb.Items;
-            return itemList;
+            // Ok() is a method in Controller which takes an object and returns a 200 response code with the object in the response body
+            return Ok(itemList);
         }
 
         // GET api/items/5
         [HttpGet("{id}")]
-        public Item Get(int id)
+        public IActionResult Get(int id)
         {
             // return the item of specified id or return null
             Item queriedItem = _mockDb.Items.FirstOrDefault(item => item.Id == id);
-            return queriedItem;
+
+            if(queriedItem == null)
+            {
+                // If we couldn't find an Item with the specified Id, we should use NotFound() which returns a 404 response
+                return NotFound();
+            }
+            return Ok(queriedItem);
         }
+
+
 
 
         
