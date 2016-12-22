@@ -8,7 +8,7 @@ using Todo2Backend.Models;
 namespace Todo2Backend.Controllers
 {
     // Instead of setting the entire route path for each action in our controller, we can set a base route path for all actions in a controller by using a route tag above the class name
-    [Route("api/Items")]
+    [Route("api/[controller]")] // by specifying "[controller]" instead of "items", our route will automatically get the name of our class (without the -Controller suffix)
     public class ItemsController : Controller
     {
         // GET api/items
