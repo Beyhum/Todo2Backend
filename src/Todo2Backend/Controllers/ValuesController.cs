@@ -6,39 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Todo2Backend.Controllers
 {
-    [Route("api/[controller]")]
+    
     public class ValuesController : Controller
     {
         // GET api/values
-        [HttpGet]
+        // This is a Route attribute, which is in charge of mapping a url path to a method in our controller
+        // We call methods in a controller "Actions"
+        // So in this case we have the format api/{controller}/{action} which is api/Values/Get
+        // If we go to baseurl/api/values/get then this action will get called, which will simply return an array or strings
+        [Route("api/values/Get")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }
