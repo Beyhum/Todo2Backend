@@ -4,27 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Todo2Backend.Models;
+using Todo2Backend.Data;
 
 namespace Todo2Backend.Controllers
 {
+
     // Instead of setting the entire route path for each action in our controller, we can set a base route path for all actions in a controller by using a route tag above the class name
     [Route("api/[controller]")] // by specifying "[controller]" instead of "items", our route will automatically get the name of our class (without the -Controller suffix)
     public class ItemsController : Controller
     {
+
+        // add a private MockDb field
+        private MockDb _mockDb = MockDb.Instance;
+
         // GET api/items
-        [HttpGet] // equivalent to [HttpGet("")]. Since we defined a base route for our controller "api/Items", we call this action through baseurl/api/Items
+        [HttpGet]
         public List<Item> Get()
         {
-            List<Item> itemList = new List<Item> { new Item(1, "Some title", "Valuable notes"), new Item(2, "Get milk", "Make sure it isn't expired...")};
+            // return all items in our MockDb
+            List<Item> itemList = _mockDb.Items;
             return itemList;
         }
 
         // GET api/items/5
-        [HttpGet("{id}")] // Since we defined a base route for our controller "api/Items", we call this action through baseurl/api/Items/id
-        // ASP.NET Core will automatically serialize our objects into JSON and return a response of content-type application/json with a body representing our object
+        [HttpGet("{id}")]
         public Item Get(int id)
         {
-            return new Item(id, $"Item of Id = {id}", "Some random message body");
+            // return the item of specified id or return null
+            Item queriedItem = _mockDb.Items.FirstOrDefault(item => item.Id == id);
+            return queriedItem;
         }
 
 
