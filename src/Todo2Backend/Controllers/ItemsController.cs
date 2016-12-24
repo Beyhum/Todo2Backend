@@ -50,6 +50,19 @@ namespace Todo2Backend.Controllers
         [HttpPost] // we can't test POST requests using a browser's address bar, we need to use a tool like Postman to define what HTTP method we want to use. See https://www.getpostman.com/
         public IActionResult Post([FromBody]ItemPostDto itemToPost) // The [FromBody] attribute specifies that the parameter is found in the request body
         {
+            // Controller has a property called ModelState. ModelState checks all the parameters that our called action requires and sees if they are valid
+            // In our ItemPostDto, we set the Title property as Required with a min length of 2. If the client's request doesn't contain a Title with these conditions,
+            // then the ModelState.IsValid property will be false
+            bool isValidPost = ModelState.IsValid;
+
+            if (!isValidPost)
+            {
+                // we return a BadRequest (400 response) with the ModelState in the response body. The ModelState object will represent the list of errors the client made
+                // e.g. The request body was missing a "Title" property
+                return BadRequest(ModelState);
+            }
+
+
             // copy the Title and Notes properties from the ItemPostDto to the actual Item object that will be created and stored in our database
             // we define the ID for this new Item as the length of our List of Items + 1
             Item postedItem = new Item(id: _mockDb.Items.Count + 1, title: itemToPost.Title, notes: itemToPost.Notes);
