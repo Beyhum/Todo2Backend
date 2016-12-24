@@ -51,10 +51,14 @@ namespace Todo2Backend
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // In here we define how we want our app to respond to HTTP requests that it receives
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            // Make sure our DB is initialized
+            DbInitializer.Initialize(context);
+
 
             // In short MVC (Model View Controller) is an architectural pattern which separates our app's logic from its presentation
             // We have a Controller than listens to user requests, selects relevant Models to use and returns data to the View which renders our data to the user
