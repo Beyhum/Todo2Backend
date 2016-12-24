@@ -65,7 +65,7 @@ namespace Todo2Backend.Controllers
 
             // copy the Title and Notes properties from the ItemPostDto to the actual Item object that will be created and stored in our database
             // we define the ID for this new Item as the length of our List of Items + 1
-            Item postedItem = new Item(id: _mockDb.Items.Count + 1, title: itemToPost.Title, notes: itemToPost.Notes);
+            Item postedItem = new Item(id: _mockDb.Items.Last().Id + 1, title: itemToPost.Title, notes: itemToPost.Notes);
 
             // add the new item to our DB
             _mockDb.Items.Add(postedItem);
@@ -76,6 +76,26 @@ namespace Todo2Backend.Controllers
         }
 
 
+        // DELETE api/items/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            // FirstOrDefault takes a lambda expression which takes an Item and returns a bool
+            // It will then go through all Items in our list and return the first one matching our bool condition (in this case item.Id == id)
+            // If no Item matching the condition is found, it returns null
+            Item itemToDelete = _mockDb.Items.FirstOrDefault(item => item.Id == id);
+
+            // Couldn't find an Item with the specified ID if itemToDelete is null
+            if (itemToDelete == null)
+            {
+                return NotFound();
+            }
+
+            _mockDb.Items.Remove(itemToDelete);
+
+            // NoContent() returns a 204 which is a successful response without a body (we don't need to return an object to the client in this case so we don't use Ok() )
+            return NoContent();
+        }
 
 
     }
