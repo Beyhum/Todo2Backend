@@ -20,9 +20,7 @@ namespace Todo2Backend.Data
         {
             Items = new List<Item>
             {
-                new Item(1, "Get a secret santa gift", "Make sure that it's gift-wrapped"),
-                new Item(2, "Buy a plane ticket before Sunday", "Try to find a deal for 2"),
-                new Item(3, "Check up on course registration", "Get there before 10:00 am, offices close early")
+               
             };
         }
     }

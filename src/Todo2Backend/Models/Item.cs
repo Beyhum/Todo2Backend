@@ -15,11 +15,17 @@ namespace Todo2Backend.Models
 
         public string Notes { get; set; }
 
-        public Item(int id, string title, string notes)
+        // Entity Framework will take care of setting the ID of newly created Items. No need for a constructor which takes an id
+        public Item(string title, string notes)
         {
-            Id = id;
             Title = title;
             Notes = notes;
+        }
+
+        // Entity Framework requires a parameterless constructor for all object used in the DbContext
+        private Item()
+        {
+
         }
     }
 }

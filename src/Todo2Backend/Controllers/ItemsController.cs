@@ -14,8 +14,15 @@ namespace Todo2Backend.Controllers
     public class ItemsController : Controller
     {
 
-        // add a private MockDb field
-        private MockDb _mockDb = MockDb.Instance;
+        // add private DbContext field, swap out our MockDb for an ApplicationDbContext which will save our Items to a database in persistent memory 
+        private ApplicationDbContext _context;
+
+        // We registered our ApplicationDbContext in our Startup class
+        // We can now include an ApplicationDbContext in our Controller's constructor, and ASP.NET will give us the appropriate instance of the object
+        public ItemsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         // GET api/items
         [HttpGet]
@@ -24,8 +31,8 @@ namespace Todo2Backend.Controllers
         // Using IActionResult lets us wrap the objects we return with HTTP Response messages that we define (Not Found, Bad Request, Success, etc...)
         public IActionResult Get()
         {
-            // return all items in our MockDb
-            List<Item> itemList = _mockDb.Items;
+            // return all items in our Database
+            List<Item> itemList = _context.Items.ToList();
             // Ok() is a method in Controller which takes an object and returns a 200 response code with the object in the response body
             return Ok(itemList);
         }
@@ -35,7 +42,7 @@ namespace Todo2Backend.Controllers
         public IActionResult Get(int id)
         {
             // return the item of specified id or return null
-            Item queriedItem = _mockDb.Items.FirstOrDefault(item => item.Id == id);
+            Item queriedItem = _context.Items.FirstOrDefault(item => item.Id == id);
 
             if(queriedItem == null)
             {
@@ -62,9 +69,14 @@ namespace Todo2Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            Item postedItem = new Item(id: _mockDb.Items.Last().Id + 1, title: itemToPost.Title, notes: itemToPost.Notes);
+            // We don't specify the Id of the new Item. Entity Framework will automatically set the ID of the created Item
+            Item postedItem = new Item(title: itemToPost.Title, notes: itemToPost.Notes);
 
-            _mockDb.Items.Add(postedItem);
+            // Add the new Item to the database
+            _context.Items.Add(postedItem);
+
+            // Save changes made to the database
+            _context.SaveChanges();
 
             // CreatedAtAction() gives a 201 response (CreatedAt) with a response header named "Location" which defines the URL at which we can find the newly created Item
             // 1st parameter is the Action name (name of method in this controller which returns the Item), 2nd is route values (parameters that the method takes), 3rd is the created Item itself
@@ -79,7 +91,7 @@ namespace Todo2Backend.Controllers
             // FirstOrDefault takes a lambda expression which takes an Item and returns a bool
             // It will then go through all Items in our list and return the first one matching our bool condition (in this case item.Id == id)
             // If no Item matching the condition is found, it returns null
-            Item itemToDelete = _mockDb.Items.FirstOrDefault(item => item.Id == id);
+            Item itemToDelete = _context.Items.FirstOrDefault(item => item.Id == id);
 
             // Couldn't find an Item with the specified ID if itemToDelete is null
             if (itemToDelete == null)
@@ -87,7 +99,10 @@ namespace Todo2Backend.Controllers
                 return NotFound();
             }
 
-            _mockDb.Items.Remove(itemToDelete);
+            _context.Items.Remove(itemToDelete);
+
+            // Save changes made to the database
+            _context.SaveChanges();
 
             // NoContent() returns a 204 which is a successful response without a body (we don't need to return an object to the client in this case so we don't use Ok() )
             return NoContent();
