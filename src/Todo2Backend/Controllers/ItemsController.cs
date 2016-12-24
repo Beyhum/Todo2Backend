@@ -46,8 +46,24 @@ namespace Todo2Backend.Controllers
         }
 
 
+        // POST api/items
+        [HttpPost] // we can't test POST requests using a browser's address bar, we need to use a tool like Postman to define what HTTP method we want to use. See https://www.getpostman.com/
+        public IActionResult Post([FromBody]ItemPostDto itemToPost) // The [FromBody] attribute specifies that the parameter is found in the request body
+        {
+            // copy the Title and Notes properties from the ItemPostDto to the actual Item object that will be created and stored in our database
+            // we define the ID for this new Item as the length of our List of Items + 1
+            Item postedItem = new Item(id: _mockDb.Items.Count + 1, title: itemToPost.Title, notes: itemToPost.Notes);
+
+            // add the new item to our DB
+            _mockDb.Items.Add(postedItem);
+
+            // CreatedAtAction() gives a 201 response (CreatedAt) with a response header named "Location" which defines the URL at which we can find the newly created Item
+            // 1st parameter is the Action name (name of method in this controller which returns the Item), 2nd is route values (parameters that the method takes), 3rd is the created Item itself
+            return CreatedAtAction("Get", new { id = postedItem.Id }, postedItem);
+        }
 
 
-        
+
+
     }
 }
