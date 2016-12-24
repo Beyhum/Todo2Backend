@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Todo2Backend.Data;
 
 namespace Todo2Backend
 {
@@ -35,6 +36,14 @@ namespace Todo2Backend
         // We have to register the services that we plan on using. If we wanted to have an email or SMS service for example, we could get a package/library for that, then register it under this method
         public void ConfigureServices(IServiceCollection services)
         {
+            // add EntityFrameworkCore with Sqlite as a service
+            services.AddEntityFrameworkSqlite();
+
+            // add ApplicationDbContext as a service.
+            // We can add ApplicationDbContext in our Controller's constructor and ASP.NET will make sure to provide the proper instance of our DbContext when a Controller is created
+            services.AddDbContext<ApplicationDbContext>();
+
+
             // Add framework services.
             // Even MVC is optional in ASP.NET Core. It is added by default as a package in our project.json (where all our dependencies are listed)
             services.AddMvc();

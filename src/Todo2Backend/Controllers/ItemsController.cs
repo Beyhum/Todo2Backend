@@ -62,12 +62,8 @@ namespace Todo2Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-
-            // copy the Title and Notes properties from the ItemPostDto to the actual Item object that will be created and stored in our database
-            // we define the ID for this new Item as the length of our List of Items + 1
             Item postedItem = new Item(id: _mockDb.Items.Last().Id + 1, title: itemToPost.Title, notes: itemToPost.Notes);
 
-            // add the new item to our DB
             _mockDb.Items.Add(postedItem);
 
             // CreatedAtAction() gives a 201 response (CreatedAt) with a response header named "Location" which defines the URL at which we can find the newly created Item
